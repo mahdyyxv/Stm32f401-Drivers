@@ -20,9 +20,9 @@
 #include "USART_interface.h"
 #include "USART_config.h"
 #include "USART_private.h"
-static volatile uint8 u8StringBuffer1[50] = {'\0'};
-static volatile uint8 u8StringBuffer2[50] = {'\0'};
-static volatile uint8 u8StringBuffer6[50] = {'\0'};
+static volatile uint8 u8StringBuffer1[USART_MAX_BUFFER_LENGTH] = {'\0'};
+static volatile uint8 u8StringBuffer2[USART_MAX_BUFFER_LENGTH] = {'\0'};
+static volatile uint8 u8StringBuffer6[USART_MAX_BUFFER_LENGTH] = {'\0'};
 static uint8 u8Is_Uart_Init[3] = {0};
 void (*USART1_pvCallBack) (void);
 void (*USART2_pvCallBack) (void);
@@ -588,7 +588,7 @@ void USART1_IRQHandler()
         else
         {
             u8Counter = 0;
-            memset(u8StringBuffer1, '\0', 50);
+            memset(u8StringBuffer1, '\0', USART_MAX_BUFFER_LENGTH);
             if(IsQueueEmpty(&udtUsart1Buffer) == 0)
             {
                 USART1 -> CR1.B.TXEIE = 0;
@@ -623,7 +623,7 @@ void USART2_IRQHandler()
         else
         {
             u8Counter = 0;
-            memset(u8StringBuffer2, '\0', 50);
+            memset(u8StringBuffer2, '\0', USART_MAX_BUFFER_LENGTH);
             if(IsQueueEmpty(&udtUsart2Buffer) == 0)
             {
                 USART2 -> CR1.B.TXEIE = 0;
@@ -658,7 +658,7 @@ void USART6_IRQHandler()
         else
         {
             u8Counter = 0;
-            memset(u8StringBuffer6, '\0', 50);
+            memset(u8StringBuffer6, '\0', USART_MAX_BUFFER_LENGTH);
             if(IsQueueEmpty(&udtUsart6Buffer) == 0)
             {
                 USART6 -> CR1.B.TXEIE = 0;
@@ -709,7 +709,6 @@ static uint8 DE_Queue(UART_Buffer_t *ptr, uint8* retdata)
             memset(ptr -> u8String[i], '\0', 50);
             strcpy(ptr -> u8String[i], ptr -> u8String[i+1]);
         }
-        // ptr -> u8BufferState[ptr->u8Tail] = USART_BUFFER_AVAILABLE;
         ptr -> u8Tail--;
         ptr -> u8BufferStatus[ptr->u8Tail] = USART_BUFFER_BUSY;
         retVal = 1;
